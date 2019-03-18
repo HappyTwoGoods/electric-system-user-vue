@@ -13,51 +13,63 @@
         <thead>
         <tr>
           <th>编号</th>
-          <!--<th>电表编号</th>-->
-          <!--<th>电表余额</th>-->
-          <!--<th>缴费状态</th>-->
-          <!--<th>缴费方式</th>-->
-          <!--<th>缴费</th>-->
+          <th>电表编号</th>
+          <th>用户名</th>
+          <th>用户电话</th>
+          <th>抄表数据</th>
+          <th>时间</th>
         </tr>
         </thead>
         <tbody>
-        <!--<tr v-for="(payment,index) in paymentInfo">-->
-          <!--<td>{{index+1}}</td>-->
-          <!--<td>{{payment.electricId}}</td>-->
-          <!--<td>{{payment.money}}</td>-->
-          <!--<td>{{payment.paymentState == 0 ? '未缴费': '已缴费'}}</td>-->
-          <!--<td>{{payment.paymentMethod == 1 ? '现金' : '微信'}}</td>-->
-          <!--<td><button class="btn btn-info btn-lg" data-toggle="modal" style="height: 40px"-->
-                      <!--@click="dialogInfo = true, getelectricId(payment.electricId)">-->
-            <!--缴费-->
-          <!--</button></td>-->
-        <!--</tr>-->
+        <tr v-for="(record,index) in recordInfo">
+          <td>{{index+1}}</td>
+          <td>{{record.electricNum}}</td>
+          <td>{{record.userName}}</td>
+          <td>{{record.userPhone}}</td>
+          <td>{{record.copyData}}</td>
+          <td>{{record.addTime}}</td>
+        </tr>
         </tbody>
       </table>
-    </div>
-    <div v-show="dialogInfo" class="dialog">
-      <div class="mask"></div>
-      <div class="float_frame">
-        <div class="modal-header">
-          <span><strong>缴费</strong></span>
-        </div>
-        <!--<div style="margin-top: 20px">-->
-          <!--<label>金额：</label><input style="border-radius: 5%" type="text" v-model="price"/>-->
-        <!--</div>-->
-        <div style="margin-top: 20px">
-          <button class="btn btn-info" @click="dialogInfo=false">取消</button>
-          <button class="btn btn-info" style="margin-left: 80px" @click="payMoney()">微信缴费</button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
 <script>
+  import {service} from '../js/api'
+
   export default {
     data(){
       return{
-        dialogInfo: false
+        dialogInfo: false,
+        recordInfo: null,
+        total:0,
+        pagesize:9,
+        currentPage:1,
       }
+    },
+    methods: {
+      getRecordInfo(){
+        service('get','/reader/queryAll',{
+        }).then(data => {
+          if (data.code !== 200){
+            alert(data.message);
+            return;
+          }
+          this.recordInfo = data.data;
+          console.log(this.recordInfo)
+        })
+      },
+      handleSizeChange: function (size) {
+        this.pagesize = size;
+        console.log(this.pagesize)  //每页下拉显示数据
+      },
+      handleCurrentChange: function(currentPage){
+        this.currentPage = currentPage;
+        console.log(this.currentPage)  //点击第几页
+      }
+    },
+    mounted(){
+      this.getRecordInfo();
     }
   }
 </script>
@@ -68,9 +80,11 @@
   }
 
   .table-div {
+    overflow:scroll;
     width: 90%;
-    height: 600px;
+    height: 700px;
     margin-top: 50px;
+    background-color: cadetblue;
   }
 
   .dialog {

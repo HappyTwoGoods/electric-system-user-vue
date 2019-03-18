@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "element-ui": "^2.6.1",
     "popper.js": "^1.14.7",
     "qs": "^6.6.0",
     "vue": "^2.5.2",
