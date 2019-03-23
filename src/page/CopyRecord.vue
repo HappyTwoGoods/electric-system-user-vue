@@ -3,10 +3,10 @@
     <div>
       <div class="col-lg-4" style="margin-top: 50px">
         <div class="input-group">
-          <input type="text" class="form-control" placeholder="请输入电表号码">
+          <input type="text" class="form-control" placeholder="请输入电表号码" v-model="electricNum">
         </div>
       </div>
-      <button class="btn btn-info" style="margin-top: -60px; margin-left: -30%">搜索</button>
+      <button class="btn btn-info" style="margin-top: -60px; margin-left: -30%" @click="selectByNums()">搜索</button>
     </div>
     <div class="table-div">
       <table class="table table-striped">
@@ -45,6 +45,7 @@
         total:0,
         pagesize:9,
         currentPage:1,
+        electricNum: null
       }
     },
     methods: {
@@ -59,13 +60,16 @@
           console.log(this.recordInfo)
         })
       },
-      handleSizeChange: function (size) {
-        this.pagesize = size;
-        console.log(this.pagesize)  //每页下拉显示数据
-      },
-      handleCurrentChange: function(currentPage){
-        this.currentPage = currentPage;
-        console.log(this.currentPage)  //点击第几页
+      selectByNums(){
+        service('get','/reader/selectByNum',{
+          num : this.electricNum
+        }).then(data => {
+          if (data.code !== 200){
+            alert(data.message);
+            return
+          }
+          this.recordInfo = data.data;
+        })
       }
     },
     mounted(){

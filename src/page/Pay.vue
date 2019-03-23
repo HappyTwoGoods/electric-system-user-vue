@@ -1,13 +1,12 @@
 <template>
   <div class="body">
   <div>
-    <!--<input type="text" class="input-style" placeholder="请输入电表号码"/><button class="button-style">查询</button>-->
     <div class="col-lg-4" style="margin-top: 50px">
       <div class="input-group">
-        <input type="text" class="form-control" placeholder="请输入电表号码">
+        <input type="text" class="form-control" placeholder="请输入电表号码" v-model="electricNum">
       </div>
     </div>
-    <button class="btn btn-info" style="margin-top: -60px; margin-left: -30%">搜索</button>
+    <button class="btn btn-info" style="margin-top: -60px; margin-left: -30%" @click="selectByNum()">搜索</button>
   </div>
   <div class="table-div">
     <table class="table table-striped">
@@ -15,41 +14,23 @@
       <tr>
         <th>编号</th>
         <th>电表编号</th>
-        <th>电表余额</th>
-        <th>缴费状态</th>
+        <th>缴费金额</th>
+        <th>电表状态</th>
         <th>缴费方式</th>
-        <th>缴费</th>
+        <th>缴费时间</th>
       </tr>
       </thead>
       <tbody>
-      <tr v-for="(payment,index) in paymentInfo">
+      <tr v-for="(record,index) in paymentInfo">
         <td>{{index+1}}</td>
-        <td>{{payment.electricId}}</td>
-        <td>{{payment.money}}</td>
-        <td>{{payment.paymentState == 0 ? '未缴费': '已缴费'}}</td>
-        <td>{{payment.paymentMethod == 1 ? '现金' : '微信'}}</td>
-        <td><button class="btn btn-info btn-lg" data-toggle="modal" style="height: 40px"
-                    @click="dialogInfo = true, getelectricId(payment.electricId)">
-          缴费
-        </button></td>
+        <td>{{record.electricNum}}</td>
+        <td>{{record.money}}</td>
+        <td>{{record.payEleState == 1 ? '正常' : '停电'}}</td>
+        <td>{{record.payMethod == 0 ? '现金' : '微信'}}</td>
+        <td>{{record.updateTime}}</td>
       </tr>
       </tbody>
     </table>
-  </div>
-  <div v-show="dialogInfo" class="dialog">
-    <div class="mask"></div>
-    <div class="float_frame">
-      <div class="modal-header">
-        <span><strong>缴费</strong></span>
-      </div>
-      <div style="margin-top: 20px">
-        <label>金额：</label><input style="border-radius: 5%" type="text" v-model="price"/>
-      </div>
-      <div style="margin-top: 20px">
-        <button class="btn btn-info" @click="dialogInfo=false">取消</button>
-        <button class="btn btn-info" style="margin-left: 80px" @click="payMoney()">微信缴费</button>
-      </div>
-    </div>
   </div>
 </div>
 </template>
@@ -58,6 +39,7 @@
   export default {
     data(){
       return{
+        electricNum: null,
         paymentInfo: null,
         dialogInfo: false,
         price: null,
@@ -67,28 +49,26 @@
     },
     methods: {
       getPaymentInfo(){
-        service('get','/user/query/payment', {
+        service('get','/user/pay/record', {
 
         }).then(data => {
           if (data.code !== 200) {
             alert(data.message);
             return;
           }
-          this.paymentInfo = data.data.paymentInfo;
+          this.paymentInfo = data.data;
           console.log(this.paymentInfo)
         })
       },
-      payMoney(){
-        service('get','/user/payMoney',{
-          paymentMethod: this.paymentMethod,
-          money: this.price,
-          electricId: this.eleId
+      selectByNum(){
+        service('get','/user/selectByNum',{
+          num: this.electricNum
         }).then(data => {
           if (data.code !== 200) {
             alert(data.message);
             return;
           }
-          alert("缴费成功！");
+          this.paymentInfo = data.data;
         })
       },
       getelectricId(id){

@@ -40,16 +40,20 @@
           },
           {
             'path': '/UseElectric',
-            'name': '用电量'
+            'name': '电表信息'
           },
           {
             'path': '/Pay',
-            'name': '缴费'
+            'name': '缴费记录'
           },
           {
             'path': '/UserInfo',
             'name': '个人信息'
           },
+          {
+            'path': '/BandElectric',
+            'name': '绑定电表'
+          }
         ]
       }
     },

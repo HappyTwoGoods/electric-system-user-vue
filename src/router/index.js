@@ -11,6 +11,8 @@ import Reader from '@/components/Reader'
 import CopyRecord from '@/page/CopyRecord'
 import ReaderInfo from '@/page/ReaderInfo'
 import UserHome from '@/page/UserHome'
+import BandElectric from '@/page/BandElectric'
+import AddCopy from '@/page/AddCopy'
 
 Vue.use(Router)
 
@@ -84,6 +86,11 @@ export default new Router({
           path: "/UserHome",
           name: 'UserInfo',
           component: UserHome
+        },
+        {
+          path: "/BandElectric",
+          name: 'BandElectric',
+          component: BandElectric
         }
       ]
     },
@@ -93,6 +100,11 @@ export default new Router({
       component: Reader,
       redirect: '/Login',
       children: [
+        {
+          path: '/AddCopy',
+          name: 'AddCopy',
+          component: AddCopy
+        },
         {
           path: '/CopyRecord',
           name: 'CopyRecord',

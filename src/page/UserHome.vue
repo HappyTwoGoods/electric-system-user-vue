@@ -1,5 +1,7 @@
 <template>
   <div>
+    <div class="float-div" id="toLeft">
+    </div>
     <table class="table table-hover" style="margin-top: 100px;width: 90%; margin-left: 5%">
       <caption style="margin-top: -200px">国家统一用电价格表</caption>
       <thead>
@@ -48,10 +50,36 @@
           this.typeData = data.data;
           console.log(this.typeData)
         })
+      },
+      getSendMessage(){
+        service('get','/user/send/remind',{
+        }).then(data => {
+          if (data.code !== 200) {
+            alert(data.message);
+            return
+          }
+          for(let i = 0; i < data.data.length; i++){
+            let colors = ["red","green","pink","hostpink","cyan","purple","deepskyblue","yellowgreen"];
+            let randomcolor = parseInt(Math.random()*(colors.length));
+            let randomY = parseInt(Math.random()*50);
+            let span = $("<span></span>");//创建span
+            span.text("***您有欠费电表:"+data.data[i]+",请及时缴费***");//设置内容
+            span.css("font-size","18px");
+            span.css("color",colors[randomcolor]);
+            $(".float-div").append(span);
+            $(".float-div").animate({left:1400},10000,"linear",function(){
+              //到了终点，需要删除内容
+              $(this).remove();
+            })//添加动画
+            span.appendTo(".float-div");
+            $(".float-div").val("");
+          }
+        })
       }
     },
     mounted(){
       this.getTypeInfo();
+      this.getSendMessage();
     }
   }
 
@@ -64,5 +92,14 @@
     /*background-color: darksalmon;*/
     margin-left: 20%;
     margin-top: 300px;
+  }
+
+  .float-div {
+    width: 100%;
+    height: 50px;
+    background-color: yellow;
+    margin-top: 50px;
+    /*z-index: -999;*/
+    /*transition: transform 0.35s;*/
   }
 </style>

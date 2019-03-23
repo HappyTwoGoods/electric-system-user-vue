@@ -33,6 +33,10 @@
         readerName: null,
         navList: [
           {
+            'path': '/addCopy',
+            'name': '抄表操作'
+          },
+          {
             'path': '/CopyRecord',
             'name': '抄表记录'
           },
