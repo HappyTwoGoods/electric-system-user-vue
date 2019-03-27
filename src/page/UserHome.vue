@@ -2,7 +2,9 @@
   <div>
     <div class="float-div" id="toLeft">
     </div>
-    <table class="table table-hover" style="margin-top: 100px;width: 90%; margin-left: 5%">
+    <label>请输入编号</label><input type="text" v-model="eleNum"/><button @click="getChars()">确定</button>
+    <div id="box" class="box-style"></div>
+    <table class="table table-hover" style="margin-top: 100px; width: 45%; margin-left: 3%">
       <caption style="margin-top: -200px">国家统一用电价格表</caption>
       <thead>
       <tr>
@@ -33,10 +35,13 @@
 </template>
 <script>
   import {service} from '../js/api'
+  import Chart from 'echarts'
   export default {
     data(){
       return{
         typeData: null,
+        eleNum: 0,
+        eleData: null,
       }
     },
     methods: {
@@ -75,6 +80,89 @@
             $(".float-div").val("");
           }
         })
+      },
+      getChars(){
+        service('get','/user/getEachars',{
+          num: this.eleNum
+        }).then(data => {
+          if (data.code !== 200) {
+            alert(data.message);
+            return;
+          }
+          this.eleData = data.data;
+          let seriesData = [];
+          this.eleData.forEach(function (item) {
+            let outObj = {};
+            outObj.name = item.updateTime;
+            outObj.value = item.copyData;
+            seriesData.push(outObj);
+          });
+          let myChart = Chart.init(document.getElementById("box"));
+          let option = {
+            title: {
+              text: '过去7次用电量记录统计',
+            },
+            tooltip: {
+              trigger: 'axis'
+            },
+            grid: {
+              left: '3%',
+              right: '4%',
+              bottom: '3%',
+              containLabel: true
+            },
+            toolbox: {
+              feature: {
+                saveAsImage: {}
+              }
+            },
+            xAxis: {
+              type: 'category',
+              boundaryGap: false,
+              data: seriesData.map(function (times) {
+                return times.name;
+              }),
+              axisLine:{
+                lineStyle:{
+                  color:'red'
+                }
+              },
+              axisLabel:{
+                rotate:30,
+                interval:0
+              },
+            },
+            yAxis : [
+              {
+                type : 'value',
+                axisLabel : {
+                  formatter: '{value} °'
+                }
+              }
+            ],
+            series: [
+              {
+                name:'电表记录',
+                type:'line',
+                symbolSize:4,
+                color:['red'],
+                data: seriesData.map(function (data) {
+                  return data.value;
+                }),
+                smooth:false,
+                itemStyle:{
+                  normal:{
+                    lineStyle:{
+                      width:2,
+                      type:'dotted'
+                    }
+                  }
+                }
+              },
+            ]
+          };
+          myChart.setOption(option);
+        });
       }
     },
     mounted(){
@@ -87,11 +175,10 @@
 </script>
 <style scoped>
   .text-div {
-    width: 50%;
+    width: 45%;
     height: 500px;
-    /*background-color: darksalmon;*/
-    margin-left: 20%;
-    margin-top: 300px;
+    margin-left: 55%;
+    margin-top: -50px;
   }
 
   .float-div {
@@ -99,7 +186,12 @@
     height: 50px;
     background-color: yellow;
     margin-top: 50px;
-    /*z-index: -999;*/
-    /*transition: transform 0.35s;*/
+  }
+
+  .box-style {
+    width: 800px;
+    height: 400px;
+    margin-left: 25%;
+    margin-top: 100px;
   }
 </style>

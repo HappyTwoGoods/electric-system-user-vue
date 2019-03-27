@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "echarts": "^4.2.1",
     "element-ui": "^2.6.1",
     "popper.js": "^1.14.7",
     "qs": "^6.6.0",
     "vue": "^2.5.2",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "vx-easyui": "^1.1.15"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",

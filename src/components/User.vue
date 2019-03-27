@@ -75,7 +75,7 @@
             alert(data.message);
             return;
           }
-          this.$router.push({path: '/Login'})
+          this.$router.push({path: '/'})
         })
       }
     },

@@ -152,7 +152,7 @@
             return;
           }
           alert("登录成功！");
-          this.$router.push({path: '/'})
+          this.$router.push({path: '/USER'})
         })
       },
       Register(){
